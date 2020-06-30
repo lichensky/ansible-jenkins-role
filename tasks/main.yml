@@ -1,0 +1,68 @@
+---
+
+- name: Include OS-Specific variables
+  include_vars: "{{ ansible_os_family }}.yml"
+
+- name: OS-specific setup
+  include_tasks: "setup-{{ ansible_os_family }}.yml"
+
+- include_tasks: configuration.yml
+
+- name: Ensure JENKINS_HOME directory exists
+  file:
+    path: "{{ jenkins_home }}"
+    state: directory
+    owner: jenkins
+    group: jenkins
+    mode: u+rwx
+
+- name: Ensure custom init scripts directory exists
+  file:
+    path: "{{ jenkins_init_scripts_directory }}"
+    state: directory
+    owner: jenkins
+    group: jenkins
+    mode: 0775
+
+- name: Ensure plugins init script is in place
+  template:
+    src: "init/plugins.groovy"
+    dest: "{{ jenkins_init_scripts_directory }}/plugins.groovy"
+    owner: jenkins
+    group: jenkins
+    mode: 0775
+  notify: restart jenkins
+
+- name: Ensure Jenkins is started and enabled
+  service:
+    name: jenkins
+    state: started
+    enabled: true
+
+- name: Ensure init scripts are in place
+  template:
+    src: "init/{{ item }}.groovy"
+    dest: "{{ jenkins_init_scripts_directory }}/{{ item }}.groovy"
+    owner: jenkins
+    group: jenkins
+    mode: 0775
+  with_items:
+    - general
+    - security
+    - credentials
+    - slaves
+    - library
+    - environment
+  notify: restart jenkins
+
+- name: Logging configuration
+  copy:
+    src: logging.properties
+    dest: "{{ jenkins_home }}/logging.properties"
+
+- name: Jenkins is in required groups
+  user:
+    name: jenkins
+    groups: "{{ jenkins_user_groups }}"
+    append: true
+  notify: restart jenkins

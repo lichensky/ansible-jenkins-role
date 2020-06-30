@@ -1,0 +1,9 @@
+---
+
+jenkins_apt_package: "jenkins={{ jenkins_version }}"
+
+jenkins_repo_key_url: https://pkg.jenkins.io/debian-stable/jenkins.io.key
+jenkins_repo_url: deb https://pkg.jenkins.io/debian-stable binary/
+
+# Jenkins default properties file
+jenkins_init_file: /etc/default/jenkins

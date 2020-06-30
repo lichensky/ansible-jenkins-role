@@ -1,0 +1,24 @@
+---
+
+- name: Ensure dependencies are installed.
+  apt:
+    name:
+      - apt-transport-https
+      - openjdk-8-jdk
+    state: present
+
+- name: Jenkins apt repository key
+  apt_key:
+    url: "{{ jenkins_repo_key_url }}"
+    state: present
+
+- name: Jenkins apt repository
+  apt_repository:
+    repo: "{{ jenkins_repo_url }}"
+    state: present
+    update_cache: true
+
+- name: Ensure Jenkins is installed
+  apt:
+    name: "{{ jenkins_apt_package }}"
+    state: present

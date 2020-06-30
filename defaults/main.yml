@@ -1,0 +1,80 @@
+---
+
+# Jenkins version
+jenkins_version: '2.204.2'
+
+# Jenkins configuration
+jenkins_home: /var/lib/jenkins/
+jenkins_init_scripts_directory: "{{ jenkins_home }}/init.groovy.d"
+
+# Jenkins domain settings
+jenkins_domain: my.jenkins.domain
+jenkins_root_url: "http://{{ jenkins_domain }}"
+
+# Number of executors
+jenkins_executors_number: 5
+
+# Jenkins OS groups
+jenkins_user_groups: []
+
+# Plugins to install
+jenkins_plugins: []
+
+# These properties are overriding the default Jenkins properties
+jenkins_init_properties:
+  - property: JENKINS_HOME
+    value: "{{ jenkins_home }}"
+
+# These properties will extend defaults Jenkins properties
+# By default do not run setup wizard and set logging config
+jenkins_init_properties_extended:
+  - property: JAVA_ARGS
+    value: >-
+      -Djenkins.install.runSetupWizard=false
+      -Djava.util.logging.config.file={{ jenkins_home }}/logging.properties
+
+# Setup Jenkins credentials.
+# User password and SSH credentials are supported
+# Example:
+# jenkins_credentials:
+#   - type: userpass
+#     id: my-user-credentials
+#     description: My user credentials
+#     user: my-user
+#     password: my-secret
+#   - type: ssh
+#     id: my-ssh-credentials
+#     description: SSH user credentials
+#     user: my-user
+#     key: my-secret-ssh-key
+jenkins_credentials: []
+
+# Shared libraries
+# jenkins_libraries:
+#   - name: my-lib
+#     version: master
+#     credentials: git-credentials-id
+#     implicit: true
+#     git_source_id: lib-repo
+#     git_repo: http://github.com/my/my-lib/
+jenkins_libraries: []
+
+# SSH slaves definitions
+# Example:
+# foo:
+#   - name: "slave-1"
+#     label: "docker"
+#     host: "192.168.1.100"
+#     description: "bare metal docker slave"
+#     remote_fs: "/home/jenkins"
+#     executors: 10
+#     user: jenkins
+#     credentials: ssh-slave-credentials-id
+jenkins_ssh_slaves: []
+
+# List of environment key-value pairs
+# Example:
+# jenkins_environment:
+#   - key: FOO
+#     value: bar
+jenkins_environment: []
